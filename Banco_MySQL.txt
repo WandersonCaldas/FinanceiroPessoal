@@ -1,0 +1,132 @@
+CREATE SCHEMA `db_financeiro` DEFAULT CHARACTER SET latin1 ;
+
+/*-------------------------------------------------------------------------------------------*/
+
+CREATE TABLE `db_financeiro`.`tbl_usuario` (
+  `cod_usuario` INT NOT NULL AUTO_INCREMENT,
+  `txt_login` VARCHAR(45) NOT NULL,
+  `txt_senha` VARCHAR(45) NOT NULL,
+  `txt_nome` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`cod_usuario`),
+  UNIQUE INDEX `txt_login_UNIQUE` (`txt_login` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+/*-------------------------------------------------------------------------------------------*/
+
+INSERT INTO `db_financeiro`.`tbl_usuario`
+(
+`txt_login`,
+`txt_senha`,
+`txt_nome`)
+VALUES
+(
+'ADMINISTRADOR',
+'1B0948E37E0BE8A1E2E67EA03F3AD2A9',
+'WANDERSON');
+
+/*-------------------------------------------------------------------------------------------*/
+
+CREATE TABLE `db_financeiro`.`tbl_mes` (
+  `cod_mes` INT NOT NULL AUTO_INCREMENT,
+  `txt_mes` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`cod_mes`),
+  UNIQUE INDEX `txt_mes_UNIQUE` (`txt_mes` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+/*-------------------------------------------------------------------------------------------*/
+
+INSERT INTO tbl_mes(txt_mes) VALUES('JANEIRO');
+INSERT INTO tbl_mes(txt_mes) VALUES('FEVEREIRO');
+INSERT INTO tbl_mes(txt_mes) VALUES('MARÇO');
+INSERT INTO tbl_mes(txt_mes) VALUES('ABRIL');
+INSERT INTO tbl_mes(txt_mes) VALUES('MAIO');
+INSERT INTO tbl_mes(txt_mes) VALUES('JUNHO');
+INSERT INTO tbl_mes(txt_mes) VALUES('JULHO');
+INSERT INTO tbl_mes(txt_mes) VALUES('AGOSTO');
+INSERT INTO tbl_mes(txt_mes) VALUES('SETEMBRO');
+INSERT INTO tbl_mes(txt_mes) VALUES('OUTUBRO');
+INSERT INTO tbl_mes(txt_mes) VALUES('NOVEMBRO');
+INSERT INTO tbl_mes(txt_mes) VALUES('DEZEMBRO');
+
+/*-------------------------------------------------------------------------------------------*/
+
+CREATE TABLE `db_financeiro`.`tbl_ano` (
+  `cod_ano` INT NOT NULL,
+  PRIMARY KEY (`cod_ano`),
+  UNIQUE INDEX `cod_ano_UNIQUE` (`cod_ano` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+/*-------------------------------------------------------------------------------------------*/
+
+INSERT INTO tbl_ano VALUES(2017);
+
+/*-------------------------------------------------------------------------------------------*/
+
+CREATE TABLE `db_financeiro`.`tbl_despesa` (
+  `cod_despesa` INT NOT NULL AUTO_INCREMENT,
+  `txt_despesa` VARCHAR(100) NOT NULL,
+  `txt_descricao` VARCHAR(500) NULL,
+  `cod_ativo` INT NOT NULL DEFAULT 1,
+  PRIMARY KEY (`cod_despesa`),
+  UNIQUE INDEX `txt_despesa_UNIQUE` (`txt_despesa` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+/*-------------------------------------------------------------------------------------------*/
+
+CREATE TABLE `db_financeiro`.`tbl_lancamento` (
+  `cod_lancamento` INT NOT NULL AUTO_INCREMENT,
+  `dt_inclusao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `dt_vencimento` DATETIME NOT NULL,
+  `cod_despesa` INT NOT NULL,
+  `txt_descricao` VARCHAR(500) NULL,
+  `cod_ano` INT NOT NULL,
+  `cod_mes` INT NOT NULL,
+  `txt_valor_despesa` VARCHAR(45) NOT NULL,
+  `dt_pagamento` DATETIME NULL,
+  `txt_valor_pagamento` VARCHAR(45) NULL,
+  PRIMARY KEY (`cod_lancamento`),
+  INDEX `FK_lancamento_despesa_idx` (`cod_despesa` ASC),
+  INDEX `FK_lancamento_ano_idx` (`cod_ano` ASC),
+  INDEX `FK_lancamento_mes_idx` (`cod_mes` ASC),
+  UNIQUE INDEX `UQ_lancamento` (`cod_despesa` ASC, `cod_ano` ASC, `cod_mes` ASC),
+  CONSTRAINT `FK_lancamento_despesa`
+    FOREIGN KEY (`cod_despesa`)
+    REFERENCES `db_financeiro`.`tbl_despesa` (`cod_despesa`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_lancamento_ano`
+    FOREIGN KEY (`cod_ano`)
+    REFERENCES `db_financeiro`.`tbl_ano` (`cod_ano`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_lancamento_mes`
+    FOREIGN KEY (`cod_mes`)
+    REFERENCES `db_financeiro`.`tbl_mes` (`cod_mes`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+/*-------------------------------------------------------------------------------------------*/
+
+CREATE TABLE `db_financeiro`.`tbl_digital` (
+  `cod_chave` INT NOT NULL AUTO_INCREMENT,
+  `cod_lancamento` INT NOT NULL,
+  `txt_arquivo` VARCHAR(500) NOT NULL,
+  `dt_inclusao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`cod_chave`),
+  UNIQUE INDEX `txt_arquivo_UNIQUE` (`txt_arquivo` ASC),
+  UNIQUE INDEX `cod_lancamento_UNIQUE` (`cod_lancamento` ASC, `txt_arquivo` ASC),
+  CONSTRAINT `FK_lancamento_digital`
+    FOREIGN KEY (`cod_lancamento`)
+    REFERENCES `db_financeiro`.`tbl_lancamento` (`cod_lancamento`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+/*-------------------------------------------------------------------------------------------*/
