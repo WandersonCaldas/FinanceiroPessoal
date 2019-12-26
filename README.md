@@ -1,2 +1,2 @@
 # FinanceiroPessoal
-Controle de gastos pessoal. Asp.Net com Mysql.
+Controle de gastos pessoais. Asp.Net com Mysql.
